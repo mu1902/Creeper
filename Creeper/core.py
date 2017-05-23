@@ -26,14 +26,16 @@ def parse_html(pq, content_sel, link_sel=''):
     res = []
     for i in range(0, len(fil), 3):
         if '股东' in fil[i + 2].text():
-            n_pos = fil[i + 2].text().find('截')
-            date = ''
-            if n_pos >= 0:
-                date = fil[i + 2].text()[n_pos:n_pos + 12]
-            pattern = re.compile(
-                r'([一二三四五六七八九零十百千万亿]+|[0-9]+[,]*[0-9]+.[0-9]+[人户万名，。])')
-            number = pattern.search(fil[i + 2].text(), n_pos + 12)
-            num = number.group(0) if number else ''
+            n_pos = fil[i + 2].text().find('日')
+
+            pattern_date = re.compile(r'(截.*日)')
+            res_date = pattern_date.search(fil[i + 2].text())
+            date = res_date.group(0) if res_date else ''
+
+            pattern_number = re.compile(r'([一二三四五六七八九零十百千万亿]+|[0-9]+[,]*[0-9]*[.]?[0-9]*[人户万名，。]?)')
+            res_number = pattern_number.search(fil[i + 2].text(), n_pos)
+            num = res_number.group(0) if res_number else ''
+
             res.append((fil[i].text(), fil[i + 1].text(),
                         date, num))
     return res
