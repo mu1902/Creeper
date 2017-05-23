@@ -23,8 +23,8 @@ def get_html(url, post_data, link_sel=''):
 
 def parse_html(content, link_sel=''):
     ''' 处理页面 '''
-    fil = list(
-        pq(content)('.answer_Box .comCode a, .comName a, .answerBox .cntcolor').items())
+    fil = list(pq(content)(
+        '.answer_Box .comCode a, .comName a, .answerBox .cntcolor').items())
     res = []
     for i in range(0, len(fil), 3):
         if '股东' in fil[i + 2].text():
@@ -45,6 +45,7 @@ def parse_html(content, link_sel=''):
 
 
 def to_excel(res_list):
+    ''' 生成EXCEL文件 '''
     excel = xlwt.Workbook()
     sheet = excel.add_sheet("my_sheet")
     for row in range(0, len(res_list)):
@@ -54,6 +55,7 @@ def to_excel(res_list):
 
 
 def progressbar(cur, total):
+    ''' 进度条显示 '''
     percent = '{:.2%}'.format(cur / total)
     sys.stdout.write('\r')
     sys.stdout.write("[%-50s] %s" % ('=' * int(math.floor(cur * 50 / total)),
@@ -63,11 +65,11 @@ def progressbar(cur, total):
 
 if __name__ == '__main__':
     # q_job = Queue()
-    # 参数从1开始
     start = (datetime.datetime.now() -
              datetime.timedelta(days=14)).strftime('%Y-%m-%d')
     end = datetime.datetime.now().strftime('%Y-%m-%d')
     key = '股东'
+    # 参数从1开始
     for i in range(1, len(sys.argv)):
         if i == 1:
             start = sys.argv[i]
