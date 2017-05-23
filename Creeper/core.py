@@ -1,11 +1,13 @@
 ''' 爬虫核心类 '''
 import datetime
+import math
 import re
 import sys
 import urllib
 from queue import Queue
 from threading import Thread
 
+import xlwt
 from pyquery import PyQuery as pq
 
 THREAD_NUM = 10
@@ -15,14 +17,14 @@ def get_html(url, post_data, link_sel=''):
     ''' 获取页面 '''
     req = urllib.request.Request(url)
     data = urllib.parse.urlencode(post_data).encode('utf-8')
-    content = urllib.request.urlopen(req, data).read()
-    doc = pq(content)
-    return doc
+    con = urllib.request.urlopen(req, data).read()
+    return con
 
 
-def parse_html(pq, content_sel, link_sel=''):
+def parse_html(content, link_sel=''):
     ''' 处理页面 '''
-    fil = list(pq(content_sel).items())
+    fil = list(
+        pq(content)('.answer_Box .comCode a, .comName a, .answerBox .cntcolor').items())
     res = []
     for i in range(0, len(fil), 3):
         if '股东' in fil[i + 2].text():
@@ -32,13 +34,31 @@ def parse_html(pq, content_sel, link_sel=''):
             res_date = pattern_date.search(fil[i + 2].text())
             date = res_date.group(0) if res_date else ''
 
-            pattern_number = re.compile(r'([一二三四五六七八九零十百千万亿]+|[0-9]+[,]*[0-9]*[.]?[0-9]*[人户万名，。]?)')
+            pattern_number = re.compile(
+                r'([0-9]+[,]*[0-9]*[.]?[0-9]*[人户万名，。]?)')
             res_number = pattern_number.search(fil[i + 2].text(), n_pos)
             num = res_number.group(0) if res_number else ''
 
             res.append((fil[i].text(), fil[i + 1].text(),
                         date, num))
     return res
+
+
+def to_excel(res_list):
+    excel = xlwt.Workbook()
+    sheet = excel.add_sheet("my_sheet")
+    for row in range(0, len(res_list)):
+        for col in range(0, len(res_list[row])):
+            sheet.write(row, col, res_list[row][col])
+    excel.save("data.xls")
+
+
+def progressbar(cur, total):
+    percent = '{:.2%}'.format(cur / total)
+    sys.stdout.write('\r')
+    sys.stdout.write("[%-50s] %s" % ('=' * int(math.floor(cur * 50 / total)),
+                                     percent))
+    sys.stdout.flush()
 
 
 if __name__ == '__main__':
@@ -65,9 +85,12 @@ if __name__ == '__main__':
         'condition.keyWord': key,
         'pageNo': 0,
         'pageSize': 10}
+    res_list = []
     for i in range(100):
         post_data['pageNo'] = i + 1
-        r = parse_html(get_html(url, post_data),
-                       '.answer_Box .comCode a, .comName a, .answerBox .cntcolor')
-        for item in r:
-            print(item)
+        for item in parse_html(get_html(url, post_data)):
+            res_list.append(item)
+        progressbar(i + 1, 100)
+    # print(res_list)
+    to_excel(res_list)
+    print('\nDone')
