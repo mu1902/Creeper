@@ -15,7 +15,7 @@ def parse_html(content, _id):
     for t in stocks.items():
         title = t.children('p:first').text()
         date = _id
-        code = title.split(')')[0][-6:-1]
+        code = title.split(')')[0][-6:]
         name = title.split('(')[0]
 
         table1 = t.find('tbody:eq(0) tr')
