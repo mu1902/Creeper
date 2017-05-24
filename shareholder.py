@@ -1,73 +1,41 @@
-''' 爬虫核心类 '''
+''' 爬取深交易股东数回答 '''
 import datetime
-import math
 import re
 import sys
-import urllib
-from queue import Queue
-from threading import Thread
 
-import xlwt
 from pyquery import PyQuery as pq
 
-THREAD_NUM = 10
+import Creeper as cp
 
 
-def get_html(url, post_data, link_sel=''):
-    ''' 获取页面 '''
-    req = urllib.request.Request(url)
-    data = urllib.parse.urlencode(post_data).encode('utf-8')
-    con = urllib.request.urlopen(req, data).read()
-    return con
-
-
-def parse_html(content, link_sel=''):
+def parse_html(content):
     ''' 处理页面 '''
-    fil = list(pq(content)(
-        '.answer_Box .comCode a, .comName a, .answerBox .cntcolor').items())
+    code = pq(content)('.answer_Box .comCode a').items()
+    name = pq(content)('.answer_Box .comName a').items()
+    des = pq(content)('.answer_Box .answerBox .cntcolor').items()
+    raw = zip(code, name, des)
     res = []
-    for i in range(0, len(fil), 3):
-        if '股东' in fil[i + 2].text():
-            n_pos = fil[i + 2].text().find('日')
+    for r in raw:
+        if '股东' in r[2].text():
+            n_pos = r[2].text().find('日')
 
             pattern_date = re.compile(r'(截.*日)')
-            res_date = pattern_date.search(fil[i + 2].text())
+            res_date = pattern_date.search(r[2].text())
             date = res_date.group(0) if res_date else ''
 
             pattern_number = re.compile(
                 r'([0-9]+[,]*[0-9]*[.]?[0-9]*[人户万名，。]?)')
-            res_number = pattern_number.search(fil[i + 2].text(), n_pos)
+            res_number = pattern_number.search(r[2].text(), n_pos)
             num = res_number.group(0) if res_number else ''
 
-            res.append((fil[i].text(), fil[i + 1].text(),
-                        date, num))
+            res.append((r[0].text(), r[1].text(), date, num))
     return res
 
 
-def to_excel(res_list):
-    ''' 生成EXCEL文件 '''
-    excel = xlwt.Workbook()
-    sheet = excel.add_sheet("my_sheet")
-    for row in range(0, len(res_list)):
-        for col in range(0, len(res_list[row])):
-            sheet.write(row, col, res_list[row][col])
-    excel.save("data.xls")
-
-
-def progressbar(cur, total):
-    ''' 进度条显示 '''
-    percent = '{:.2%}'.format(cur / total)
-    sys.stdout.write('\r')
-    sys.stdout.write("[%-50s] %s" % ('=' * int(math.floor(cur * 50 / total)),
-                                     percent))
-    sys.stdout.flush()
-
-
 if __name__ == '__main__':
-    # q_job = Queue()
-    start = (datetime.datetime.now() -
+    start = (datetime.date.today() -
              datetime.timedelta(days=14)).strftime('%Y-%m-%d')
-    end = datetime.datetime.now().strftime('%Y-%m-%d')
+    end = datetime.date.today().strftime('%Y-%m-%d')
     key = '股东'
     # 参数从1开始
     for i in range(1, len(sys.argv)):
@@ -90,9 +58,7 @@ if __name__ == '__main__':
     res_list = []
     for i in range(100):
         post_data['pageNo'] = i + 1
-        for item in parse_html(get_html(url, post_data)):
+        for item in parse_html(cp.download.get_html(url, post_data)):
             res_list.append(item)
-        progressbar(i + 1, 100)
-    # print(res_list)
-    to_excel(res_list)
-    print('\nDone')
+        cp.tool.progressbar(i + 1, 100)
+    cp.tool.to_excel(res_list, 'shareholder')
