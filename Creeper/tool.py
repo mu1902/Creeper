@@ -14,7 +14,7 @@ def to_excel(res_list, filename):
         for col in range(0, len(res_list[row])):
             sheet.write(row, col, res_list[row][col])
     excel.save(filename + ".xls")
-    print("完成")
+    print("创建完成")
 
 
 def progressbar(cur, total):
