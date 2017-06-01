@@ -13,7 +13,10 @@ def to_excel(res_list, filename):
     for row in range(0, len(res_list)):
         for col in range(0, len(res_list[row])):
             sheet.write(row, col, res_list[row][col])
-    excel.save(filename + ".xls")
+    try:
+        excel.save(filename + ".xls")
+    except IOError:
+        print("创建失败")
     print("创建完成")
 
 

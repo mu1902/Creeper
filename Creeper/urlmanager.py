@@ -8,11 +8,10 @@ class UrlManager(object):
         self.url_future = set()
         self.url_past = set()
 
-    def add_url(self, item=None, list=[]):
+    def add_url(self, item=None, item_list=[]):
         if item:
             self.url_future.add(i)
-        for i in list:
-            self.url_future.add(i)
+        self.url_future.extend(item_list)
 
     def fin_url(self, item):
         self.url_future.discard(item)
@@ -21,6 +20,8 @@ class UrlManager(object):
     def get_one(self):
         if len(self.url_future) > 0:
             return self.__base + self.url_future.pop()
+        else:
+            return None
 
     def is_done(self):
         if len(self.url_future) == 0:
