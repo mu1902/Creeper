@@ -3,7 +3,8 @@
 
 class UrlManager(object):
 
-    def __init__(self):
+    def __init__(self, url_base):
+        self.__base = url_base
         self.url_future = set()
         self.url_past = set()
 
@@ -17,5 +18,12 @@ class UrlManager(object):
         self.url_future.discard(item)
         self.url_past.add(item)
 
-    def get_one(self)
-        return self.url_future.pop()
+    def get_one(self):
+        if len(self.url_future) > 0:
+            return self.__base + self.url_future.pop()
+
+    def is_done(self):
+        if len(self.url_future) == 0:
+            return True
+        else:
+            return False

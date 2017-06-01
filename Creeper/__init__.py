@@ -1,2 +1,2 @@
-from Creeper import download
+from Creeper import downloader
 from Creeper import tool

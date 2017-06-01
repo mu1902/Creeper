@@ -1,8 +1,8 @@
-''' 爬虫获取网页内容 '''
+''' 获取网页内容 '''
 import urllib
 
 
-def get_html(url, post_data=None, link_sel=''):
+def get_html(url, post_data=None):
     ''' 获取页面 '''
     req = urllib.request.Request(url)
     if post_data:

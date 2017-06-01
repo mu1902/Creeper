@@ -17,19 +17,20 @@ def parse_html(content, _id):
         date = _id
         code = title.split(')')[0][-6:]
         name = title.split('(')[0]
+        reason = title.split('：')[1]
 
         table1 = t.find('tbody:eq(0) tr')
         for tr in table1.items():
             way = "最大买入"
             depart = tr.find('a').attr('title')
             vol = tr.children('td').eq(1).text()
-            res.append((date, code, name, way, depart, vol))
+            res.append((date, code, name, reason, way, depart, vol))
         table2 = t.find('tbody:eq(1) tr')
         for tr in table2.items():
             way = "最大卖出"
             depart = tr.find('a').attr('title')
             vol = tr.children('td').eq(2).text()
-            res.append((date, code, name, way, depart, vol))
+            res.append((date, code, name, reason, way, depart, vol))
 
     return res
 
@@ -54,9 +55,8 @@ if __name__ == '__main__':
     for i in range(dalta):
         date_str = (datetime.datetime.strptime(
             start, '%Y-%m-%d') + datetime.timedelta(days=i)).strftime('%Y-%m-%d')
-        html = cp.download.get_html(url + date_str + '/').decode('GBK')
-        for item in parse_html(html, date_str):
-            res_list.append(item)
+        html = cp.downloader.get_html(url + date_str + '/').decode('GBK')
+        res_list.extend(parse_html(html, date_str))
         cp.tool.progressbar(i + 1, dalta)
     cp.tool.to_excel(res_list, 'longhu')
     print(len(res_list))

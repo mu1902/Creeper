@@ -53,12 +53,11 @@ if __name__ == '__main__':
         'condition.dateFrom': start,
         'condition.dateTo': end,
         'condition.keyWord': key,
-        'pageNo': 0,
-        'pageSize': 10}
+        'pageNo': 0}
     res_list = []
     for i in range(100):
         post_data['pageNo'] = i + 1
-        for item in parse_html(cp.download.get_html(url, post_data)):
-            res_list.append(item)
+        res_list.extend(parse_html(cp.downloader.get_html(url, post_data)))
         cp.tool.progressbar(i + 1, 100)
     cp.tool.to_excel(res_list, 'shareholder')
+    print(len(res_list))
