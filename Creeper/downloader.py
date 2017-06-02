@@ -12,6 +12,9 @@ def get_html(url, post_data=None):
         else:
             con = urllib.request.urlopen(req).read()
         return con
-    except urllib.error.HTTPError, urllib.error.URLError e:
+    except urllib.error.HTTPError as e:
+        print(e)
+        return ''
+    except urllib.error.URLError as e:
         print(e)
         return ''

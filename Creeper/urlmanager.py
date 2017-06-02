@@ -14,7 +14,6 @@ class UrlManager(object):
         self.url_future.extend(item_list)
 
     def fin_url(self, item):
-        self.url_future.discard(item)
         self.url_past.add(item)
 
     def get_one(self):
