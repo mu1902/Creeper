@@ -2,15 +2,23 @@
 import urllib
 
 
-def get_html(url, post_data=None):
+def get_html(url, request_data=None, method='post', header=None):
     ''' 获取页面 '''
-    req = urllib.request.Request(url)
     try:
-        if post_data:
-            data = urllib.parse.urlencode(post_data).encode('utf-8')
-            con = urllib.request.urlopen(req, data).read()
+        if request_data:
+            if method == 'post':
+                data = urllib.parse.urlencode(request_data).encode('utf_8')
+                req = urllib.request.Request(url, data)
+            else:
+                data = urllib.parse.urlencode(request_data)
+                req = urllib.request.Request(url + data)
         else:
-            con = urllib.request.urlopen(req).read()
+            req = urllib.request.Request(url)
+
+        if header:
+            for key in header:
+                req.add_header(key, header[key])
+        con = urllib.request.urlopen(req).read()
         return con
     except urllib.error.HTTPError as e:
         print(e)
