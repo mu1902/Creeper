@@ -3,6 +3,7 @@ import math
 import sys
 
 import xlwt
+import pymysql
 
 
 def to_excel(res_list, filename):
@@ -18,6 +19,36 @@ def to_excel(res_list, filename):
     except:
         print("创建失败:" + sys.exc_info()[0])
     print("创建完成")
+
+
+def to_mysql(res_list, db, table):
+    ''' 保存至MySQL数据库 '''
+    config = {
+        'host': '127.0.0.1',
+        'port': 3306,
+        'user': 'root',
+        'password': 'j9mkmuko',
+        'db': db
+    }
+    db = pymysql.connect(**config)
+    cursor = db.cursor()
+    sql = ''
+
+    for i in res_list:
+        print(i)
+        tmplist = []
+        for k, v in i.items():
+            tmp = "%s='%s'" % (str(k), safe(str(v)))
+            tmplist.append(' ' + tmp + ' ')
+        sql = 'INSERT INTO ' + table + ' SET ' + ' and '.join(tmplist)
+        print(sql)
+        try:
+            cursor.execute(sql)
+            db.commit()
+        except:
+            db.rollback()
+
+    db.close()
 
 
 def progressbar(cur, total):
