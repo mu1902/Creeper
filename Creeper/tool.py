@@ -28,27 +28,33 @@ def to_mysql(res_list, db, table):
         'port': 3306,
         'user': 'root',
         'password': 'j9mkmuko',
-        'db': db
+        'db': db,
+        'charset': 'utf8'
     }
     db = pymysql.connect(**config)
     cursor = db.cursor()
     sql = ''
+    res = 0
 
     for i in res_list:
-        print(i)
-        tmplist = []
+        keys = []
+        values = []
         for k, v in i.items():
-            tmp = "%s='%s'" % (str(k), safe(str(v)))
-            tmplist.append(' ' + tmp + ' ')
-        sql = 'INSERT INTO ' + table + ' SET ' + ' and '.join(tmplist)
-        print(sql)
+            keys.append(k)
+            values.append("'" + str(v) + "'")
+        sql = 'INSERT INTO ' + table + \
+            '(' + ','.join(keys) + ') VALUES (' + ','.join(values) + ')'
+        # print(sql)
         try:
-            cursor.execute(sql)
+            res += cursor.execute(sql)
             db.commit()
         except:
+            print("数据库出错:" + sql)
             db.rollback()
 
     db.close()
+    print(res)
+    return res
 
 
 def progressbar(cur, total):

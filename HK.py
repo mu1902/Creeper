@@ -13,8 +13,6 @@ urls = ["http://sc.hkex.com.hk/TuniS/www.hkex.com.hk/chi/csm/DailyStat/",
         ]
 d = datetime.date.today()
 d = d - datetime.timedelta(days=1)
-top = []
-change = []
 
 
 def parse_html1(content, _id=None):
@@ -87,6 +85,8 @@ def parse_html2(content, _id=None):
 
 
 def HKEX():
+    top = []
+    change = []
     if d.weekday() != 5 and d.weekday() != 6:
         t = datetime.datetime.now().timestamp()
         t_str = str(t * 1000)[0:13]
@@ -98,30 +98,27 @@ def HKEX():
     __VIEWSTATEGENERATOR = ''
     __EVENTVALIDATION = ''
 
-    # for i in range(3):
-    #     if d.weekday() != 5 and d.weekday() != 6:
-    #         if __VIEWSTATE == '':
-    #             html = cp.downloader.get_html(
-    #                 urls[i + 1], {}, method='get').decode('utf-8')
-    #         else:
-    #             html = cp.downloader.get_html(urls[i + 1], {
-    #                 "__VIEWSTATE": __VIEWSTATE,
-    #                 "__VIEWSTATEGENERATOR": __VIEWSTATEGENERATOR,
-    #                 "__EVENTVALIDATION": __EVENTVALIDATION,
-    #                 "ddlShareholdingDay": "0" * (2 - len(str(d.day))) + str(d.day),
-    #                 "ddlShareholdingMonth": "0" * (2 - len(str(d.month))) + str(d.month),
-    #                 "ddlShareholdingYear": str(d.year),
-    #                 "btnSearch.x": "43",
-    #                 "btnSearch.y": "8"}, method='post').decode('utf-8')
-    #         change.extend(parse_html2(html))
-    #     __VIEWSTATE = ''
+    for i in range(3):
+        if d.weekday() != 5 and d.weekday() != 6:
+            if __VIEWSTATE == '':
+                html = cp.downloader.get_html(
+                    urls[i + 1], {}, method='get').decode('utf-8')
+            else:
+                html = cp.downloader.get_html(urls[i + 1], {
+                    "__VIEWSTATE": __VIEWSTATE,
+                    "__VIEWSTATEGENERATOR": __VIEWSTATEGENERATOR,
+                    "__EVENTVALIDATION": __EVENTVALIDATION,
+                    "ddlShareholdingDay": "0" * (2 - len(str(d.day))) + str(d.day),
+                    "ddlShareholdingMonth": "0" * (2 - len(str(d.month))) + str(d.month),
+                    "ddlShareholdingYear": str(d.year),
+                    "btnSearch.x": "43",
+                    "btnSearch.y": "8"}, method='post').decode('utf-8')
+            change.extend(parse_html2(html))
+        __VIEWSTATE = ''
 
-    # for i in top:
-    #     print(i)
-    # for i in change:
-    #     print(i)
+    # cp.tool.to_mysql(top, 'creeper', 'hktop10')
+    cp.tool.to_mysql(change, 'creeper', 'hkproportion')
 
 
 if __name__ == '__main__':
     HKEX()
-    cp.tool.to_mysql(top, 'creeper', 'hktop10')
