@@ -1,6 +1,7 @@
 ''' 爬虫相关功能 '''
 import math
 import sys
+import datetime
 
 import xlwt
 import pymysql
@@ -64,3 +65,19 @@ def progressbar(cur, total):
     sys.stdout.write("[%-50s] %s" % ('=' * int(math.floor(cur * 50 / total)),
                                      percent))
     sys.stdout.flush()
+
+
+def isTradingDay(day):
+    days = []
+    try:
+        file_object = open('restday.txt', mode='r', encoding='UTF-8')
+        days = file_object.readlines()
+        file_object.close()
+    except FileNotFoundError as e:
+        print(e)
+        
+    days = [datetime.datetime.strptime(d[:-1], "%Y.%m.%d") for d in days]
+    if day.weekday() == 5 or day.weekday() == 6 or day in days:
+        return True
+    else:
+        return False

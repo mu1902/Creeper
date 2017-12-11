@@ -11,8 +11,8 @@ urls = ["http://sc.hkex.com.hk/TuniS/www.hkex.com.hk/chi/csm/DailyStat/",
         "http://sc.hkexnews.hk/TuniS/www.hkexnews.hk/sdw/search/mutualmarket_c.aspx?t=sh",
         "http://sc.hkexnews.hk/TuniS/www.hkexnews.hk/sdw/search/mutualmarket_c.aspx?t=sz"
         ]
-d = datetime.date.today()
-d = d - datetime.timedelta(days=1)
+dn = datetime.date.today()
+d = dn - datetime.timedelta(days=1)
 
 
 def parse_html1(content, _id=None):
@@ -87,7 +87,7 @@ def parse_html2(content, _id=None):
 def HKEX():
     top = []
     change = []
-    if d.weekday() != 5 and d.weekday() != 6:
+    if not cp.tool.isTradingDay(dn):
         t = datetime.datetime.now().timestamp()
         t_str = str(t * 1000)[0:13]
         param = 'data_tab_daily_' + d.strftime('%Y%m%d') + 'c.js?' + t_str
@@ -99,7 +99,7 @@ def HKEX():
     __EVENTVALIDATION = ''
 
     for i in range(3):
-        if d.weekday() != 5 and d.weekday() != 6:
+        if not cp.tool.isTradingDay(dn):
             if __VIEWSTATE == '':
                 html = cp.downloader.get_html(
                     urls[i + 1], {}, method='get').decode('utf-8')
@@ -116,8 +116,10 @@ def HKEX():
             change.extend(parse_html2(html))
         __VIEWSTATE = ''
 
+    print(top)
+    print(change)
     # cp.tool.to_mysql(top, 'creeper', 'hktop10')
-    cp.tool.to_mysql(change, 'creeper', 'hkproportion')
+    # cp.tool.to_mysql(change, 'creeper', 'hkproportion')
 
 
 if __name__ == '__main__':
