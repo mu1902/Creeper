@@ -6,6 +6,8 @@ import datetime
 import xlwt
 import pymysql
 
+_dir = "D:/workspace/Creeper"
+
 
 def to_excel(res_list, filename):
     ''' 生成EXCEL文件 '''
@@ -54,7 +56,6 @@ def to_mysql(res_list, db, table):
             db.rollback()
 
     db.close()
-    print(res)
     return res
 
 
@@ -70,12 +71,12 @@ def progressbar(cur, total):
 def isTradingDay(day):
     days = []
     try:
-        file_object = open('restday.txt', mode='r', encoding='UTF-8')
+        file_object = open(_dir + '/restday.txt', mode='r', encoding='UTF-8')
         days = file_object.readlines()
         file_object.close()
     except FileNotFoundError as e:
         print(e)
-        
+
     days = [datetime.datetime.strptime(d[:-1], "%Y.%m.%d") for d in days]
     if day.weekday() == 5 or day.weekday() == 6 or day in days:
         return True
