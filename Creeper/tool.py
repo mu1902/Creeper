@@ -68,7 +68,7 @@ def progressbar(cur, total):
     sys.stdout.flush()
 
 
-def isTradingDay(day):
+def isHoliday(day):
     days = []
     try:
         file_object = open(_dir + '/restday.txt', mode='r', encoding='UTF-8')
@@ -82,3 +82,9 @@ def isTradingDay(day):
         return True
     else:
         return False
+
+def preDay(day):
+    d = day - datetime.timedelta(days=1)
+    while isHoliday(d):
+        d = d - datetime.timedelta(days=1)
+    return d

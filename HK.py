@@ -12,7 +12,7 @@ urls = ["http://sc.hkex.com.hk/TuniS/www.hkex.com.hk/chi/csm/DailyStat/",
         "http://sc.hkexnews.hk/TuniS/www.hkexnews.hk/sdw/search/mutualmarket_c.aspx?t=sz"
         ]
 dn = datetime.date.today()
-d = dn - datetime.timedelta(days=1)
+d = cp.tool.preDay(dn)
 
 
 def parse_html1(content, _id=None):
@@ -74,20 +74,23 @@ def parse_html2(content, _id=None):
                     typ = '深股通'
                 else:
                     typ = ''
-                res.append({
-                    "code": code,
-                    "type": typ,
-                    "date": d.strftime('%Y-%m-%d'),
-                    "volume": int(pq(tr)("td:eq(2)").text().replace(',', '')),
-                    "proportion": float(pq(tr)("td:eq(3)").text()[:-1]) / 100
-                })
+                try:
+                    res.append({
+                        "code": code,
+                        "type": typ,
+                        "date": d.strftime('%Y-%m-%d'),
+                        "volume": int(pq(tr)("td:eq(2)").text().replace(',', '')) if pq(tr)("td:eq(2)").text() else 0,
+                        "proportion": float(pq(tr)("td:eq(3)").text()[:-1]) / 100 if pq(tr)("td:eq(3)").text() else 0
+                    })
+                except Exception as e:
+                    print(e)
     return res
 
 
 def HKEX():
     top = []
     change = []
-    if not cp.tool.isTradingDay(dn):
+    if not cp.tool.isHoliday(dn):
         t = datetime.datetime.now().timestamp()
         t_str = str(t * 1000)[0:13]
         param = 'data_tab_daily_' + d.strftime('%Y%m%d') + 'c.js?' + t_str
@@ -99,7 +102,7 @@ def HKEX():
     __EVENTVALIDATION = ''
 
     for i in range(3):
-        if not cp.tool.isTradingDay(dn):
+        if not cp.tool.isHoliday(dn):
             if __VIEWSTATE == '':
                 html = cp.downloader.get_html(
                     urls[i + 1], {}, method='get').decode('utf-8')
