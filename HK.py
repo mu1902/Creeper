@@ -115,15 +115,17 @@ def HKEX():
                     "ddlShareholdingMonth": "0" * (2 - len(str(d.month))) + str(d.month),
                     "ddlShareholdingYear": str(d.year),
                     "btnSearch.x": "43",
-                    "btnSearch.y": "8"}, method='post').decode('utf-8')
+                    "btnSearch.y": "8"}, method='post')
+                if type(html) == bytes:
+                    html = html.decode('utf-8')
             change.extend(parse_html2(html))
         __VIEWSTATE = ''
 
-    # print(top)
-    # print(change)
-    print("Top10: %d." % (cp.tool.to_mysql(top, 'creeper', 'hktop10')))
-    print("Proportion: %d." % (cp.tool.to_mysql(
-        change, 'creeper', 'hkproportion')))
+    print(top)
+    print(change)
+    # print("Top10: %d." % (cp.tool.to_mysql(top, 'creeper', 'hktop10')))
+    # print("Proportion: %d." % (cp.tool.to_mysql(
+    #     change, 'creeper', 'hkproportion')))
 
 
 if __name__ == '__main__':
