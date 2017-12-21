@@ -30,7 +30,7 @@ def get_html(url, request_data=None, method='post', header=None, cookie_name=Non
         return con
     except urllib.error.HTTPError as e:
         # print(e)
-        return ''
+        return e.reason
     except urllib.error.URLError as e:
         # print(e)
-        return ''
+        return e.reason
