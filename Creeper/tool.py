@@ -84,6 +84,7 @@ def isHoliday(day):
     else:
         return False
 
+
 def preDay(day):
     d = day - datetime.timedelta(days=1)
     while isHoliday(d):

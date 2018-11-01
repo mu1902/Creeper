@@ -19,7 +19,7 @@ def parse_html1(content, _id=None):
     ''' 处理页面 '''
     res = []
     if content != "":
-        data = json.loads(content.decode('utf-8').split(' = ')[1])
+        data = json.loads(content.split(' = ')[1])
         for da in data:
             if da['market'] == 'SSE Northbound':
                 typ = '沪股通'
@@ -51,12 +51,14 @@ def parse_html2(content, _id=None):
     ''' 处理页面 '''
     res = []
     if content != "":
-        data = pq(content)(".result-table tr")
+        data = pq(content)("#pnlResult table tr")
         __VIEWSTATE = pq(content)("#__VIEWSTATE").val()
         __VIEWSTATEGENERATOR = pq(content)("#__VIEWSTATEGENERATOR").val()
         __EVENTVALIDATION = pq(content)("#__EVENTVALIDATION").val()
         for tr in data:
-            code = pq(tr)("td:eq(0)").text()
+            code = pq(tr).find(".col-stock-code .mobile-list-body").text()
+            volume = pq(tr).find(".col-shareholding .mobile-list-body").text()
+            proportion = pq(tr).find(".col-shareholding-percent .mobile-list-body").text()
             if code:
                 if len(code) <= 4:
                     code = (5 - len(code)) * '0' + code
@@ -79,8 +81,8 @@ def parse_html2(content, _id=None):
                         "code": code,
                         "type": typ,
                         "date": d.strftime('%Y-%m-%d'),
-                        "volume": int(pq(tr)("td:eq(2)").text().replace(',', '')) if pq(tr)("td:eq(2)").text() else 0,
-                        "proportion": float(pq(tr)("td:eq(3)").text()[:-1]) / 100 if pq(tr)("td:eq(3)").text() else 0
+                        "volume": int(volume.replace(',', '')) if volume else 0,
+                        "proportion": float(proportion[:-1]) / 100 if proportion else 0
                     })
                 except Exception as e:
                     print(e)
@@ -92,7 +94,7 @@ def HKEX():
     change = []
     if not cp.tool.isHoliday(dn):
         t = datetime.datetime.now().timestamp()
-        t_str = str(t * 1000)[0:13]
+        t_str = str(t * 1000)[:13]
         param = 'data_tab_daily_' + d.strftime('%Y%m%d') + 'c.js?' + t_str
         html = cp.downloader.get_html(urls[0] + param, method='get')
         top = parse_html1(html)
@@ -105,27 +107,25 @@ def HKEX():
         if not cp.tool.isHoliday(dn):
             if __VIEWSTATE == '':
                 html = cp.downloader.get_html(
-                    urls[i + 1], {}, method='get').decode('utf-8')
+                    urls[i + 1], method='get')
             else:
                 html = cp.downloader.get_html(urls[i + 1], {
                     "__VIEWSTATE": __VIEWSTATE,
                     "__VIEWSTATEGENERATOR": __VIEWSTATEGENERATOR,
                     "__EVENTVALIDATION": __EVENTVALIDATION,
-                    "ddlShareholdingDay": "0" * (2 - len(str(d.day))) + str(d.day),
-                    "ddlShareholdingMonth": "0" * (2 - len(str(d.month))) + str(d.month),
-                    "ddlShareholdingYear": str(d.year),
-                    "btnSearch.x": "43",
-                    "btnSearch.y": "8"}, method='post')
+                    "txtShareholdingDate": d.strftime('%Y/%m/%d'),
+                    "btnSearch": '搜寻'
+                }, method='post')
                 if type(html) == bytes:
                     html = html.decode('utf-8')
             change.extend(parse_html2(html))
         __VIEWSTATE = ''
 
-    # print(top)
-    # print(change)
-    print("Top10: %d." % (cp.tool.to_mysql(top, 'creeper', 'hktop10')))
-    print("Proportion: %d." % (cp.tool.to_mysql(
-        change, 'creeper', 'hkproportion')))
+    print(len(top))
+    print(len(change))
+    # print("Top10: %d." % (cp.tool.to_mysql(top, 'creeper', 'hktop10')))
+    # print("Proportion: %d." % (cp.tool.to_mysql(
+    #     change, 'creeper', 'hkproportion')))
 
 
 if __name__ == '__main__':
