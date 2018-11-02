@@ -121,11 +121,11 @@ def HKEX():
             change.extend(parse_html2(html))
         __VIEWSTATE = ''
 
-    print(len(top))
-    print(len(change))
-    # print("Top10: %d." % (cp.tool.to_mysql(top, 'creeper', 'hktop10')))
-    # print("Proportion: %d." % (cp.tool.to_mysql(
-    #     change, 'creeper', 'hkproportion')))
+    # print(len(top))
+    # print(len(change))
+    print("Top10: %d." % (cp.tool.to_mysql(top, 'creeper', 'hktop10')))
+    print("Proportion: %d." % (cp.tool.to_mysql(
+        change, 'creeper', 'hkproportion')))
 
 
 if __name__ == '__main__':
