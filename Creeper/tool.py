@@ -1,10 +1,12 @@
 ''' 爬虫相关功能 '''
-import math
-import sys
 import datetime
+import math
+import smtplib
+import sys
+from email.mime.text import MIMEText
 
-import xlwt
 import pymysql
+import xlwt
 
 _dir = "D:/workspace/Creeper"
 
@@ -58,6 +60,20 @@ def to_mysql(res_list, db, table):
     db.close()
     return res
 
+def send_email(to_list, subject, massage):
+    mail_host = "smtp.exmail.qq.com"
+    mail_user = "fund@fundbj.com"
+    mail_pwd = "fed68390036"
+    msg = MIMEText(massage, _subtype='plain', _charset='gb2312')
+    msg['Subject'] = subject
+    msg['From'] = mail_user
+    msg['To'] = ";".join(to_list)
+    msg['Bcc'] = 'chuh@fundbj.com'
+    server = smtplib.SMTP()
+    server.connect(mail_host)
+    server.login(mail_user, mail_pwd)
+    server.sendmail(mail_user, to_list, msg.as_string())
+    server.close()
 
 def progressbar(cur, total):
     ''' 进度条显示 '''
