@@ -60,6 +60,7 @@ def to_mysql(res_list, db, table):
     db.close()
     return res
 
+
 def send_email(to_list, subject, massage):
     mail_host = "smtp.exmail.qq.com"
     mail_user = "fund@fundbj.com"
@@ -69,11 +70,13 @@ def send_email(to_list, subject, massage):
     msg['From'] = mail_user
     msg['To'] = ";".join(to_list)
     msg['Bcc'] = 'chuh@fundbj.com'
+    to_list.append('chuh@fundbj.com')
     server = smtplib.SMTP()
     server.connect(mail_host)
     server.login(mail_user, mail_pwd)
     server.sendmail(mail_user, to_list, msg.as_string())
     server.close()
+
 
 def progressbar(cur, total):
     ''' 进度条显示 '''
@@ -93,7 +96,7 @@ def isHoliday(day):
     except FileNotFoundError as e:
         print(e)
 
-    day = datetime.datetime.strptime(str(day),'%Y-%m-%d')
+    day = datetime.datetime.strptime(str(day), '%Y-%m-%d')
     days = [datetime.datetime.strptime(d[:-1], "%Y.%m.%d") for d in days]
     if day.weekday() == 5 or day.weekday() == 6 or day in days:
         return True

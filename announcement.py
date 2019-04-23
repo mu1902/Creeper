@@ -3,6 +3,7 @@ import datetime
 import json
 import random
 import re
+import time
 
 import Creeper as cp
 from pyquery import PyQuery as pq
@@ -10,6 +11,7 @@ from pyquery import PyQuery as pq
 urls = {"sse": "http://www.sse.com.cn/disclosure/listedinfo/announcement/s_docdatesort_desc_2016openpdf.htm",
         "szse": "http://www.szse.cn/api/disc/announcement/annList"}
 keywords = ['中标', '合同', '框架协议', '订单', '产品价格', '独立上市', '要约收购']
+today = datetime.date.today().strftime('%Y-%m-%d')
 
 
 def parse_html_sse(content, _id=None):
@@ -46,10 +48,24 @@ def get_html():
         request_data=json.dumps({"channelCode": ["listedNotice_disc"],
                                  "pageNum": 1,
                                  "pageSize": 30,
-                                 "seDate": ["2019-04-17", "2019-04-17"]}),
+                                 "seDate": [today, today]}),
         method='post',
         header={"Content-Type": "application/json"})
     anct_szse = parse_html_szse(html_szse)
+
+    num = int(json.loads(html_szse)['announceCount'] / 30) + 1
+    print(num)
+    for i in range(2, num+1):
+        html_szse = cp.downloader.get_html(
+            urls['szse']+'?random='+str(ran),
+            request_data=json.dumps({"channelCode": ["listedNotice_disc"],
+                                     "pageNum": i,
+                                     "pageSize": 30,
+                                     "seDate": [today, today]}),
+            method='post',
+            header={"Content-Type": "application/json"})
+        anct_szse.extend(parse_html_szse(html_szse))
+        time.sleep(0.1)
 
     message_s = [a['title'] + '\n' + a['url'] for a in anct_sse]
     message_sz = [a['title'] + '\n' + a['url'] for a in anct_szse]
