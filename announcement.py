@@ -64,8 +64,11 @@ def get_html():
                                      "seDate": [today, today]}),
             method='post',
             header={"Content-Type": "application/json"})
-        anct_szse.extend(parse_html_szse(html_szse))
-        time.sleep(0.1)
+        if html_szse:
+            anct_szse.extend(parse_html_szse(html_szse))
+        else:
+            print(i)
+        time.sleep(0.2)
 
     message_s = [a['title'] + '\n' + a['url'] for a in anct_sse]
     message_sz = [a['title'] + '\n' + a['url'] for a in anct_szse]
