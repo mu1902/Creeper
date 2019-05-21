@@ -1,4 +1,4 @@
-''' 爬取沪深港通数据 '''
+''' 爬取交易所公告数据 '''
 import datetime
 import json
 import random
@@ -68,7 +68,10 @@ def get_html():
             anct_szse.extend(parse_html_szse(html_szse))
         else:
             print(i)
-        time.sleep(0.2)
+        if i % 20 == 0:
+            time.sleep(1)
+        else:
+            time.sleep(0.1)
 
     message_s = [a['title'] + '\n' + a['url'] for a in anct_sse]
     message_sz = [a['title'] + '\n' + a['url'] for a in anct_szse]

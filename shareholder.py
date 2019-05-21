@@ -1,4 +1,4 @@
-''' 爬取深交易股东数回答 '''
+''' 爬取深交所互动易股东数回答 '''
 import datetime
 import re
 import sys
