@@ -7,9 +7,9 @@ from pyquery import PyQuery as pq
 import Creeper as cp
 
 urls = ["http://sc.hkex.com.hk/TuniS/www.hkex.com.hk/chi/csm/DailyStat/",
-        "http://sc.hkexnews.hk/TuniS/www.hkexnews.hk/sdw/search/mutualmarket_c.aspx?t=hk",
-        "http://sc.hkexnews.hk/TuniS/www.hkexnews.hk/sdw/search/mutualmarket_c.aspx?t=sh",
-        "http://sc.hkexnews.hk/TuniS/www.hkexnews.hk/sdw/search/mutualmarket_c.aspx?t=sz"
+        "https://sc.hkexnews.hk/TuniS/www.hkexnews.hk/sdw/search/mutualmarket_c.aspx?t=hk",
+        "https://sc.hkexnews.hk/TuniS/www.hkexnews.hk/sdw/search/mutualmarket_c.aspx?t=sh",
+        "https://sc.hkexnews.hk/TuniS/www.hkexnews.hk/sdw/search/mutualmarket_c.aspx?t=sz"
         ]
 dn = datetime.date.today()
 d = cp.tool.preDay(dn)

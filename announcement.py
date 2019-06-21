@@ -76,7 +76,7 @@ def get_html():
     message_s = [a['title'] + '\n' + a['url'] for a in anct_sse]
     message_sz = [a['title'] + '\n' + a['url'] for a in anct_szse]
     # print('\n'.join(message_s) + '\n' + '\n'.join(message_sz))
-    cp.tool.send_email(['wangyf@xunlc.cn', 'zhongc@fundbj.com'], '交易所公告筛选', '\n'.join(
+    cp.tool.send_email(['wangyf@xunlc.cn', 'zhongc@fundbj.com', 'xiezy@fundbj.com'], '交易所公告筛选', '\n'.join(
         message_s) + '\n' + '\n'.join(message_sz))
 
 
