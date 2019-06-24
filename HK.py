@@ -1,11 +1,13 @@
 ''' 爬取沪深港通数据 '''
 import datetime
 import json
+import warnings
 
 from pyquery import PyQuery as pq
 
 import Creeper as cp
 
+warnings.filterwarnings('ignore')
 urls = ["http://sc.hkex.com.hk/TuniS/www.hkex.com.hk/chi/csm/DailyStat/",
         "https://sc.hkexnews.hk/TuniS/www.hkexnews.hk/sdw/search/mutualmarket_c.aspx?t=hk",
         "https://sc.hkexnews.hk/TuniS/www.hkexnews.hk/sdw/search/mutualmarket_c.aspx?t=sh",
@@ -114,7 +116,11 @@ def HKEX():
                     "__VIEWSTATEGENERATOR": __VIEWSTATEGENERATOR,
                     "__EVENTVALIDATION": __EVENTVALIDATION,
                     "txtShareholdingDate": d.strftime('%Y/%m/%d'),
-                    "btnSearch": '搜寻'
+                    "btnSearch": '搜寻',
+                    "today": d.strftime('%Y%m%d'),
+                    "sortBy": 'stockcode',
+                    "sortDirection": 'asc',
+                    "alertMsg": ''
                 }, method='post')
                 if type(html) == bytes:
                     html = html.decode('utf-8')
