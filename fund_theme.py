@@ -21,7 +21,7 @@ if __name__ == '__main__':
 
     w.start()
     funds = w.wss("000001.OF,000003.OF,000004.OF,000005.OF,000006.OF,000008.OF,000009.OF,000010.OF",
-                  "fund_fullname,fund_firstinvesttype,fund_investtype,fund_themetype,fund_type,fund_trackindexcode,fund_etfwindcode,prt_netasset", "unit=1;rptDate=20181231")
+                  "fund_fullname,fund_firstinvesttype,fund_investtype,fund_themetype,fund_type,fund_trackindexcode,fund_etfwindcode,prt_netasset", "unit=1;rptDate=20190630")
 
     if funds.ErrorCode == 0:
         funds_df = pd.DataFrame(funds.Data, index=funds.Fields,

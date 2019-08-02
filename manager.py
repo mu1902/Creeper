@@ -7,8 +7,8 @@ from WindPy import w
 
 MIN_RETURN = 5
 MIN_YEARS = 5
-REPORT_DATE = '20190331'
-REPORT_DATE_PRE = '20181231'
+REPORT_DATE = '20190630'
+REPORT_DATE_PRE = '20190331'
 
 if __name__ == '__main__':
     fund_list = []
@@ -29,13 +29,34 @@ if __name__ == '__main__':
     w.start()
 
     funds = w.wss(','.join(fund_list),
-                  "fund_fundmanager,fund_fullname,fund_manager_managerworkingyears,fund_manager_geometricannualizedyield", "order=1;returnType=1")
+                  "fund_fullname,fund_setupdate,fund_fundmanager,fund_manager_fundno,fund_manager_totalnetasset,fund_manager_startdate,fund_manager_onthepostdays,fund_manager_geometricannualizedyield,fund_manager_arithmeticannualizedyield,fund_manager_managerworkingyears", "order=1;unit=1;returnType=1")
     if funds.ErrorCode != 0:
         print(funds.Data)
         sys.exit(0)
-
     funds_df = pd.DataFrame(funds.Data, index=funds.Fields,
                             columns=funds.Codes).T
+    funds_df['order'] = 1
+
+    # funds = w.wss(','.join(fund_list),
+    #               "fund_fullname,fund_setupdate,fund_fundmanager,fund_manager_fundno,fund_manager_totalnetasset,fund_manager_startdate,fund_manager_onthepostdays,fund_manager_geometricannualizedyield,fund_manager_arithmeticannualizedyield,fund_manager_managerworkingyears", "order=2;unit=1;returnType=1")
+    # if funds.ErrorCode != 0:
+    #     print(funds.Data)
+    #     sys.exit(0)
+    # funds_df2 = pd.DataFrame(funds.Data, index=funds.Fields,
+    #                         columns=funds.Codes).T
+    # funds_df2['order'] = 2
+
+    # funds = w.wss(','.join(fund_list),
+    #               "fund_fullname,fund_setupdate,fund_fundmanager,fund_manager_fundno,fund_manager_totalnetasset,fund_manager_startdate,fund_manager_onthepostdays,fund_manager_geometricannualizedyield,fund_manager_arithmeticannualizedyield,fund_manager_managerworkingyears", "order=3;unit=1;returnType=1")
+    # if funds.ErrorCode != 0:
+    #     print(funds.Data)
+    #     sys.exit(0)
+    # funds_df3 = pd.DataFrame(funds.Data, index=funds.Fields,
+    #                         columns=funds.Codes).T
+    # funds_df3['order'] = 3
+
+    # funds_df.append(funds_df2)
+    # funds_df.append(funds_df3)
     funds_df = funds_df[(funds_df['FUND_MANAGER_MANAGERWORKINGYEARS'] >
                          MIN_YEARS) & (funds_df['FUND_MANAGER_GEOMETRICANNUALIZEDYIELD'] > MIN_RETURN)]
     codes = funds_df.index.tolist()
