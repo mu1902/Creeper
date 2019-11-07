@@ -65,7 +65,7 @@ def send_email(to_list, subject, massage):
     mail_host = "smtp.exmail.qq.com"
     mail_user = "fund@fundbj.com"
     mail_pwd = "fed68390036"
-    msg = MIMEText(massage, _subtype='plain', _charset='gb2312')
+    msg = MIMEText(massage, _subtype='plain', _charset='gbk')
     msg['Subject'] = subject
     msg['From'] = mail_user
     msg['To'] = ";".join(to_list)

@@ -1,25 +1,26 @@
 ''' 获取网页内容 '''
-import urllib
+import urllib3
 import requests
 import ssl
 
+urllib3.disable_warnings()
 ssl._create_default_https_context = ssl._create_unverified_context
 cookies = {}
 
 
-def get_html(url, request_data={}, method='post', header={}, cookie={}):
+def get_html(url, request_data={}, method='post', header={}, cookie={}, code=''):
     ''' 获取页面 '''
     try:
         if method == 'post':
             r = requests.post(url, data=request_data,
-                            headers=header, cookies=cookie, timeout=5000, verify=False)
+                              headers=header, cookies=cookie, timeout=5000, verify=False)
         else:
             r = requests.get(url, params=request_data,
-                            headers=header, cookies=cookie, timeout=5000, verify=False)
-        
+                             headers=header, cookies=cookie, timeout=5000, verify=False)
+
         if r.status_code == requests.codes.ok:
             # r.raw对象 r.content二进制 r.json()解析JSON
-            r.encoding = 'utf-8'
+            r.encoding = code if code != '' else 'utf-8'
             return r.text
         else:
             print(r.text)

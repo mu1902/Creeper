@@ -7,8 +7,8 @@ from WindPy import w
 
 MIN_RETURN = 5
 MIN_YEARS = 5
-REPORT_DATE = '20190630'
-REPORT_DATE_PRE = '20190331'
+REPORT_DATE = '20190930'
+REPORT_DATE_PRE = '20190630'
 
 if __name__ == '__main__':
     fund_list = []
