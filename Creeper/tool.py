@@ -61,16 +61,16 @@ def to_mysql(res_list, db, table):
     return res
 
 
-def send_email(to_list, subject, massage):
+def send_email(to_list, subject, massage, msgType='plain', charType='gbk'):
     mail_host = "smtp.exmail.qq.com"
-    mail_user = "fund@fundbj.com"
-    mail_pwd = "fed68390036"
-    msg = MIMEText(massage, _subtype='plain', _charset='gbk')
+    mail_user = "chuh@xunlc.cn"
+    mail_pwd = "ManUtd11"
+    msg = MIMEText(massage, _subtype=msgType, _charset=charType)
     msg['Subject'] = subject
     msg['From'] = mail_user
     msg['To'] = ";".join(to_list)
-    msg['Bcc'] = 'chuh@fundbj.com'
-    to_list.append('chuh@fundbj.com')
+    msg['Bcc'] = 'chuh@xunlc.cn'
+    to_list.append('chuh@xunlc.cn')
     server = smtplib.SMTP()
     server.connect(mail_host)
     server.login(mail_user, mail_pwd)
