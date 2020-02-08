@@ -64,7 +64,7 @@ def to_mysql(res_list, db, table):
 def send_email(to_list, subject, massage, msgType='plain', charType='gbk'):
     mail_host = "smtp.exmail.qq.com"
     mail_user = "chuh@xunlc.cn"
-    mail_pwd = "ManUtd11"
+    mail_pwd = "Zhao170619"
     msg = MIMEText(massage, _subtype=msgType, _charset=charType)
     msg['Subject'] = subject
     msg['From'] = mail_user

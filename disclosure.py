@@ -14,11 +14,11 @@ def get_html():
     for c in codes:
         html = cp.downloader.get_html(
             urls['hkex'], {"sa1": "cl",
-                        "src": "MAIN",
-                        "lang": "ZH",
-                        "scsd": today,
-                        "sced": today,
-                        "sc": c}, method='get')
+                           "src": "MAIN",
+                           "lang": "ZH",
+                           "scsd": today,
+                           "sced": today,
+                           "sc": c}, method='get')
         if html != "":
             detail_a = pq(html)("a:contains('所有披露权益通知')")
             for a in detail_a:
@@ -30,11 +30,12 @@ def get_html():
                         table += pq(html)("#Table2").html()
                         table += pq(html)("#Table4 tr:eq(0)").html()
                 # print(table)
-    
+
     table = table if table != '' else '无'
-    # cp.tool.send_email([], '持仓港股股权披露', table, 'html', 'utf')
+    charType = 'utf' if table != '' else 'gbk'
+    # cp.tool.send_email([], '持仓港股股权披露', table, 'html', charType)
     cp.tool.send_email(['wujg@xunlc.cn', 'zhongc@xunlc.cn',
-                        'zhengy@xunlc.cn'], '持仓港股股权披露', table, 'html', 'utf')
+                        'zhengy@xunlc.cn'], '持仓港股股权披露', table, 'html', charType)
 
 
 if __name__ == '__main__':

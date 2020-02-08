@@ -28,3 +28,18 @@ def get_html(url, request_data={}, method='post', header={}, cookie={}, code='')
     except Exception as e:
         print(e)
         return ''
+
+
+def get_file(url, file_url):
+    try:
+        r = requests.get(url)
+        if r.status_code == requests.codes.ok:
+            with open(file_url, "wb") as f:
+                f.write(r.content)
+                return f
+        else:
+            print(r.text)
+            return ''
+    except Exception as e:
+        print(e)
+        return ''
