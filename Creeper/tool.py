@@ -69,9 +69,10 @@ def send_email(to_list, subject, massage, msgType='plain', charType='gbk'):
     msg['Subject'] = subject
     msg['From'] = mail_user
     msg['To'] = ";".join(to_list)
-    msg['Bcc'] = 'chuh@xunlc.cn'
+    # msg['Cc'] = 'chuh@xunlc.cn'
+    # msg['Bcc'] = 'chuh@xunlc.cn'
     to_list.append('chuh@xunlc.cn')
-    server = smtplib.SMTP()
+    server = smtplib.SMTP_SSL()
     server.connect(mail_host)
     server.login(mail_user, mail_pwd)
     server.sendmail(mail_user, to_list, msg.as_string())

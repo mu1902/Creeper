@@ -32,10 +32,11 @@ def get_html():
                 # print(table)
 
     table = table if table != '' else '无'
-    charType = 'utf' if table != '' else 'gbk'
-    # cp.tool.send_email([], '持仓港股股权披露', table, 'html', charType)
+    charType = 'gbk' if table != '' else 'utf'
+    msgType = 'plain' if table != '' else 'html'
+    # cp.tool.send_email([], '持仓港股股权披露', table, msgType, charType)
     cp.tool.send_email(['wujg@xunlc.cn', 'zhongc@xunlc.cn',
-                        'zhengy@xunlc.cn'], '持仓港股股权披露', table, 'html', charType)
+                        'zhengy@xunlc.cn'], '持仓港股股权披露', table, msgType, charType)
 
 
 if __name__ == '__main__':
