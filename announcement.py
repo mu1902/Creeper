@@ -22,7 +22,7 @@ urls = {"sse": "http://www.sse.com.cn/disclosure/listedinfo/announcement/s_docda
         "sseinfo": "http://sns.sseinfo.com/ajax/feeds.do",
         "cninfo": "http://irm.cninfo.com.cn/ircs/index/search"}
 keywords = [['重组并购', '(重组|收购|购买|置换)((?!(报告书|上市公告书)).)*摘要((?!(提示|进展|修订|补充)).)*$', '收购.*意向书'],
-            ['分拆上市', '分拆上市'],
+            ['分拆上市', '分拆.*上市'],
             ['大股东变更', '大股东变更'],
             ['要约收购', '要约收购报告书摘要'],
             ['回购增持', '(回购公司|增持)((?!(进展|意见|结果)).)*$'],
@@ -48,7 +48,7 @@ def parse_html_sse(content, _id=None):
     if content != "":
         data = pq(content)("dd")
     else:
-        return []
+        return [], []
     anct = [{'title': pq(dd)("em a").text(), 'code': pq(dd).attr(
         'data-seecode'), 'url': pq(dd)("em a").attr('href')} for dd in data]
     res, res_c = [], []
@@ -64,7 +64,7 @@ def parse_html_szse(content, _id=None):
     if content != "":
         data = json.loads(content)['data']
     else:
-        return []
+        return [], []
     anct = [{'title': d['title'], 'code': d['secCode'][0],
              'url': 'http://www.szse.cn/disclosure/listed/bulletinDetail/index.html?'+d['id']} for d in data]
     res, res_c = [], []
@@ -80,7 +80,7 @@ def parse_html_hse(content, _id=None):
     if content != "":
         data = json.loads(content)['newsInfoLst']
     else:
-        return []
+        return [], []
     anct = [{'title': d['stock'][0]['sc'] + '-' + d['stock'][0]['sn'] + '-' + d['title'], 'code': d['stock'][0]['sc'],
              'url': 'https://www1.hkexnews.hk'+d['webPath']} for d in data]
     res, res_c = [], []
@@ -164,7 +164,7 @@ def analysis_research_report(url):
                         for tr in tables[0]:
                             # print(tr)
                             if tr[0] and '地点' in tr[0]:
-                                address = tr[1]
+                                address = tr[1] if tr[1] else ''
                                 break
                     if address != '':
                         break
@@ -285,11 +285,11 @@ def get_html():
             message_favorite.append('无')
         else:
             message_favorite_s = [a['title'] + '\n' +
-                                  a['url'] + '\n' for a in anct_sse_c[-1]]
+                                  a['url'] + '\n' for a in anct_sse_c[i]]
             message_favorite_sz = [a['code'] + a['title'] +
-                                   '\n' + a['url'] + '\n' for a in anct_szse_c[-1]]
+                                   '\n' + a['url'] + '\n' for a in anct_szse_c[i]]
             message_favorite_h = [a['title'] + '\n' +
-                                  a['url'] + '\n' for a in anct_hse_c[-1]]
+                                  a['url'] + '\n' for a in anct_hse_c[i]]
             message_favorite.append(''.join(message_favorite_s) +
                                     ''.join(message_favorite_sz) + ''.join(message_favorite_h) + '\n')
 
@@ -299,7 +299,11 @@ def get_html():
     cp.tool.send_email(['wangyf@xunlc.cn', 'penglm@xunlc.cn', 'wujg@xunlc.cn',
                         'zhongc@xunlc.cn', 'zhengy@xunlc.cn', 'xiezy@xunlc.cn'], '交易所公告筛选', message_all)
     for i in range(len(codes)):
-        cp.tool.send_email(codes[i][0], '关注公司公告-测试', message_favorite[i])
+        if i == 0:
+            to_list = codes[i][0]
+        else:
+            to_list = codes[i][0] + codes[0][0]
+        cp.tool.send_email(to_list, '关注公司公告', message_favorite[i])
 
 
 if __name__ == '__main__':
