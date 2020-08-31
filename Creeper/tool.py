@@ -3,7 +3,11 @@ import datetime
 import math
 import smtplib
 import sys
+import os
 from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+from email.mime.base import MIMEBase
+from email import encoders
 
 import pymysql
 import xlwt
@@ -61,11 +65,25 @@ def to_mysql(res_list, db, table):
     return res
 
 
-def send_email(to_list, subject, massage, msgType='plain', charType='gbk'):
+def send_email(to_list, subject, massage, msgType='plain', charType='gbk', file=''):
     mail_host = "smtp.exmail.qq.com"
-    mail_user = "chuh@xunlc.cn"
-    mail_pwd = "Zhao170619"
-    msg = MIMEText(massage, _subtype=msgType, _charset=charType)
+    mail_user = "xunl@xunlc.cn"
+    mail_pwd = "eQK7mkczddTd8F2d"
+    if file == '':
+        msg = MIMEText(massage, _subtype=msgType, _charset=charType)
+    else:
+        msg = MIMEMultipart()
+        msg.attach(MIMEText(massage, _subtype=msgType, _charset=charType))
+        with open(file, 'rb') as f:
+            # MIMEBase表示附件的对象
+            mime = MIMEBase('text', 'txt', filename=file)
+            # filename是显示附件名字
+            mime.add_header('Content-Disposition', 'attachment', filename=os.path.split(file)[-1])
+            # 获取附件内容
+            mime.set_payload(f.read())
+            encoders.encode_base64(mime)
+            # 作为附件添加到邮件
+            msg.attach(mime)
     msg['Subject'] = subject
     msg['From'] = mail_user
     msg['To'] = ";".join(to_list)

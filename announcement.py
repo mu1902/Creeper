@@ -21,7 +21,7 @@ urls = {"sse": "http://www.sse.com.cn/disclosure/listedinfo/announcement/s_docda
         "hse": "https://www1.hkexnews.hk/ncms/json/eds/lcisehk1relsdc_1.json",
         "sseinfo": "http://sns.sseinfo.com/ajax/feeds.do",
         "cninfo": "http://irm.cninfo.com.cn/ircs/index/search"}
-keywords = [['重组并购', '(重组|收购|购买|置换)((?!(报告书|上市公告书)).)*摘要((?!(提示|进展|修订|补充)).)*$', '收购.*意向书'],
+keywords = [['重组并购', '(重组|收购|购买|置换)((?!(报告书|公告书|修订)).)*摘要((?!(提示|进展|修订|补充)).)*$', '收购.*意向书'],
             ['分拆上市', '分拆.*上市'],
             ['大股东变更', '大股东变更'],
             ['要约收购', '要约收购报告书摘要'],
@@ -29,10 +29,12 @@ keywords = [['重组并购', '(重组|收购|购买|置换)((?!(报告书|上市
             ['增发', '发行(股份|A股).*预案'],
             ['变更公司名称', '变更.*公司名称', '变更.*证券简称'],
             ['董事会变更', '聘.*董事会秘书', '董事會秘書'],
-            ['工厂搬迁', '搬迁', '关停', '爆炸', '事故'],
             ['合同价格', '中标', '框架协议', '合同', '订单', '产品价格']]
-codes = [[['wujg@xunlc.cn', 'zhongc@xunlc.cn', 'zhengy@xunlc.cn'], '00336', '01448', '000002', '600690', '600754'],
-         [['wangyf@xunlc.cn'], '600690', '01169', '000651', '000333', '01810', '000002', '02202', '000961']]
+codes = [[['wujg@xunlc.cn'], '00336', '01448'],
+         [['zhongc@xunlc.cn'], '300741', '00336', '01448'],
+         [['zhengy@xunlc.cn'], '300741', '00336', '01448'],
+         [['wangyf@xunlc.cn'], '00336', '01448'],
+         [['penglm@xunlc.cn'], '600114', '02382', '300285', '300750', '002812', '603659', '002850', '002460']]
 
 n = datetime.datetime.now()
 if n.hour < 12:
@@ -294,16 +296,29 @@ def get_html():
                                     ''.join(message_favorite_sz) + ''.join(message_favorite_h) + '\n')
 
     # print(message_favorite)
+    message_all = re.sub('(\u2022)+?', '', message_all)
     # cp.tool.send_email([], '交易所公告筛选', message_all)
 
-    cp.tool.send_email(['wangyf@xunlc.cn', 'penglm@xunlc.cn', 'wujg@xunlc.cn',
-                        'zhongc@xunlc.cn', 'zhengy@xunlc.cn', 'xiezy@xunlc.cn'], '交易所公告筛选', message_all)
-    for i in range(len(codes)):
-        if i == 0:
-            to_list = codes[i][0]
-        else:
-            to_list = codes[i][0] + codes[0][0]
-        cp.tool.send_email(to_list, '关注公司公告', message_favorite[i])
+    if n.hour < 12:
+        cp.tool.send_email(['wangyf@xunlc.cn', 'penglm@xunlc.cn', 'wujg@xunlc.cn',
+                            'zhongc@xunlc.cn', 'zhengy@xunlc.cn'], '交易所公告筛选', message_all)
+        for i in range(len(codes)):
+            if message_favorite[i] == '无':
+                cp.tool.send_email(
+                    [], '关注公司公告'+';'.join(codes[i][0]), message_favorite[i])
+            else:
+                cp.tool.send_email(codes[i][0], '关注公司公告', message_favorite[i])
+    else:
+        cp.tool.send_email(['wangyf@xunlc.cn', 'penglm@xunlc.cn',
+                            'zhongc@xunlc.cn', 'zhengy@xunlc.cn'], '交易所公告筛选', message_all)
+        for i in range(len(codes)):
+            if i == 0:
+                continue
+            if message_favorite[i] == '无':
+                cp.tool.send_email(
+                    [], '关注公司公告'+';'.join(codes[i][0]), message_favorite[i])
+            else:
+                cp.tool.send_email(codes[i][0], '关注公司公告', message_favorite[i])
 
 
 if __name__ == '__main__':
