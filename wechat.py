@@ -6,7 +6,7 @@ import time
 from pysqlcipher3 import dbapi2 as sqlite
 import Creeper as cp
 
-# os.system('nox_adb pull /data/data/com.tencent.mm/MicroMsg/87c8969adadf852b441173a366e2be9e/EnMicroMsg.db D:\Files\Wechat')
+os.system('nox_adb pull /data/data/com.tencent.mm/MicroMsg/87c8969adadf852b441173a366e2be9e/EnMicroMsg.db D:\Files\Wechat')
 
 PWD = '9c22ae0'
 DB_PATH = 'D:\Files\Wechat\EnMicroMsg.db'

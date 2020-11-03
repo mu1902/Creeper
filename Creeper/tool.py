@@ -69,6 +69,7 @@ def send_email(to_list, subject, massage, msgType='plain', charType='gbk', file=
     mail_host = "smtp.exmail.qq.com"
     mail_user = "xunl@xunlc.cn"
     mail_pwd = "eQK7mkczddTd8F2d"
+    massage = massage.encode(charType,"ignore").decode(charType,"ignore")
     if file == '':
         msg = MIMEText(massage, _subtype=msgType, _charset=charType)
     else:
